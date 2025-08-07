@@ -1,0 +1,76 @@
+@page "/ListadoEstudiantes"
+@inject ListarEstudiantesUseCase _listadoEstudiantesUseCase
+@inject EliminarEstudianteUseCase EliminarEstudianteUseCase
+@inject NavigationManager Navegador
+
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/> 
+
+<div  style="background-image: url('https://images.unsplash.com/photo-1519806870789-d65fc19601fa?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+<table class="table">
+    <thead>
+
+    <tr>
+        <th> ID</th>
+        <th>Numero Alumno</th>
+        <th>Carrera</th>
+        <th>ACCION</th>
+      </tr>  
+
+      </thead>
+     <tbody>
+        @foreach(var e in lisE)
+        {
+            <tr>
+                <td>@e.id</td>
+                <td>@e.NumAlumno</td>
+                <td>@e.Carrera</td>
+                 <td>
+                  <button class="btn btn-primary" title="Editar Estudiante" @onclick ="()=>ModificarE(e)" >
+<span  class="oi oi-pencil"></span>
+</button>
+
+<button class="btn btn-danger" title="Eliminar Estudiante" @onclick="()=>ConfirmarEliminacion(e)">
+<span class="oi oi-trash"></span>
+</button>
+                </td>
+            </tr>
+        }
+     </tbody> 
+
+   </table>
+
+
+</div>
+@code{
+
+List<Estudiante> lisE = new List<Estudiante>();
+
+DialogoConfirmacion dialogo=null!;
+
+Estudiante? EliminarEstudiante=null;
+protected override void OnInitialized(){
+  lisE=_listadoEstudiantesUseCase.Ejecutar();
+}
+
+
+private void ModificarE(Estudiante e){
+  Navegador.NavigateTo($"estudiante/{e.id}");
+}
+
+
+private void ConfirmarEliminacion(Estudiante e){
+ EliminarEstudiante=e;
+  dialogo.mensaje= $"Desea eliminar al estudiante {e.Nombre}?";
+  dialogo.Mostrar();
+
+
+}
+private void Eliminar(){
+
+  if(EliminarEstudiante!=null){
+    EliminarEstudianteUseCase.Ejecutar(EliminarEstudiante.id);
+  }
+
+}
+}

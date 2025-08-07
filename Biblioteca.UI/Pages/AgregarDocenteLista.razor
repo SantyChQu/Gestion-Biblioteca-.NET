@@ -1,0 +1,106 @@
+@page "/docente/{id:int?}"
+@inject NavigationManager Navegador;
+@inject AgregarDocenteUseCase _agregarDocente
+@inject ObtenerDocenteUseCase ObtenerDocenteUseCase
+@inject ModificarDocenteUseCase ModificarDocenteUseCase
+
+<EditForm Model="@d" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+
+<div  style="background-image: url('https://images.unsplash.com/photo-1519806870789-d65fc19601fa?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+@if (esNuevo)
+{
+<h1> Complete el siguiente formulario para registrar al docente:</h1>
+
+<input @ref="input_01" placeholder="Nombre" @bind="d.Nombre" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Nombre)"/>
+<input placeholder="Apellido" @bind="d.Apellido" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Apellido)"/>
+<label>Numero de Carnet: <input type="number" placeholder="Numero de Carnet" @bind="d.NumCarnet"></label>
+<ValidationMessage For = "@(()=> @d.NumCarnet)"/>
+<input placeholder="Direccion" @bind="d.Direccion" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Direccion)"/>
+<input  placeholder="Facultad" @bind="d.Facultad" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Facultad)"/>
+
+<!--<input type="number" placeholder="Telefono" @bind="d.Telefono" class="form-control" > -->
+<label>Telefono: <input type="number" placeholder="Telefono" @bind="d.Telefono"></label>
+<ValidationMessage For = "@(()=> @d.Telefono)"/>
+<input  placeholder="Correo" @bind="d.Correo" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Correo)"/>
+<label>Numero Matricula: <input type="number" placeholder="Numero Matricula" @bind="d.NumMatricula"></label <br>
+<ValidationMessage For = "@(()=> @d.NumMatricula)"/>
+<label>Año de Inicio: <input type="number" placeholder="Año De Inicio" @bind="d.AñoInicio"></label >
+<ValidationMessage For = "@(()=> @d.AñoInicio)"/>
+<button class ="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+
+}
+else
+{
+<h3>Modificando al Cliente "@d.Nombre"</h3>
+<input @ref="input_01" placeholder="Nombre" @bind="d.Nombre" class="form-control">
+<ValidationMessage For = "@(()=> @d.Nombre)"/>
+<input placeholder="Apellido" @bind="d.Apellido" class="form-control">
+<ValidationMessage For = "@(()=> @d.Apellido)"/>
+<input placeholder="Direccion" @bind="d.Direccion" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Direccion)"/>
+<input  placeholder="Facultad" @bind="d.Facultad" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Facultad)"/>
+
+<!--<input type="number" placeholder="Telefono" @bind="d.Telefono" class="form-control" > -->
+<label>Telefono: <input type="number" placeholder="Telefono" @bind="d.Telefono"></label>
+<ValidationMessage For = "@(()=> @d.Telefono)"/>
+<input  placeholder="Correo" @bind="d.Correo" class="form-control" >
+<ValidationMessage For = "@(()=> @d.Correo)"/>
+<label>Numero Matricula: <input type="number" placeholder="Numero Matricula" @bind="d.NumMatricula"></label <br>
+<ValidationMessage For = "@(()=> @d.NumMatricula)"/>
+<label>Año de Inicio: <input type="number" placeholder="Año De Inicio" @bind="d.AñoInicio"></label >
+<ValidationMessage For = "@(()=> @d.AñoInicio)"/>
+<button class="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+
+}
+</div>
+</EditForm>
+@code{
+
+Docente d = new Docente();
+[Parameter]
+public int? id{set;get;}
+
+bool esNuevo=true;
+ElementReference input_01;
+void Aceptar(){
+
+  
+  if (string.IsNullOrWhiteSpace(d.Nombre) || string.IsNullOrWhiteSpace(d.Apellido) || (d.NumCarnet == null) || (d.NumCarnet == 0) || (string.IsNullOrWhiteSpace(d.Correo)) || (d.NumMatricula == null) || (d.NumMatricula == 0) || (d.AñoInicio == null) || (d.AñoInicio == 0))
+  {return;}
+
+  if(esNuevo){
+    _agregarDocente.Ejecutar(d);
+    }
+    else{
+        ModificarDocenteUseCase.Ejecutar(d);
+    }
+    d= new Docente();
+    input_01.FocusAsync();
+    Navegador.NavigateTo("ListadoDocentes");
+    }
+
+        protected override void OnParametersSet()
+        {
+         if(id!=null){
+            var BuscarDocente= ObtenerDocenteUseCase.Ejecutar(id.Value);
+            if(BuscarDocente!=null){
+                d=BuscarDocente;
+                esNuevo=false;
+
+            }
+         }
+        }
+   private async Task OnValidSubmit(EditContext editContext){}
+ 
+    }
+      
+
+
+<!-- <input placeholder="Informacion" @bind="d.toString" class="form-control" -->

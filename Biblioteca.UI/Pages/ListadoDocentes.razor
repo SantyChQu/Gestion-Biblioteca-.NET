@@ -1,0 +1,75 @@
+@page "/ListadoDocentes"
+
+@inject ListarDocentesUseCase ListarDocentesUseCase
+@inject EliminarDocenteUseCase EliminarDocenteUseCase
+@inject NavigationManager Navegador
+
+
+<DialogoConfirmacion @ref="dialogo" OnConfirmado="Eliminar"/> 
+
+
+<div  style="background-image: url('https://images.unsplash.com/photo-1672357867603-f829ed422847?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+<table class="table">
+    <thead>
+
+    <tr>
+        <th>ID</th>
+        <th>Numero Matricula</th>
+        <th>Año de Inicio</th>
+        <th>ACCION</th>
+      </tr>  
+
+      </thead>
+     <tbody>
+        @foreach(var d in _lista)
+        {
+            <tr>
+                <td>@d.id</td>
+                <td>@d.NumMatricula</td>
+                <td>@d.AñoInicio</td>
+                <td>
+                  <button class="btn btn-primary" title="Editar Docente" @onclick ="()=>Modificar(d)" >
+<span  class="oi oi-pencil"></span>
+</button>
+
+<button class="btn btn-danger" title="Eliminar Docente" @onclick="()=>ConfirmarEliminacion(d)">
+<span class="oi oi-trash"></span>
+</button>
+                </td>
+            </tr>
+        }
+     </tbody> 
+
+   </table>
+   </div>
+@code{
+    List<Docente> _lista = new List<Docente>();
+DialogoConfirmacion dialogo = null!;
+
+      Docente? docenteEliminar = null;
+        protected override void OnInitialized()
+        {
+          _lista= ListarDocentesUseCase.Ejecutar();
+        }
+
+      private void ConfirmarEliminacion(Docente d){
+
+      docenteEliminar=d;
+      dialogo.mensaje=$"Desea eliminar al docente {docenteEliminar.Nombre}";
+      dialogo.Mostrar();
+
+      }
+private void Eliminar()
+{
+if (docenteEliminar != null)
+{
+EliminarDocenteUseCase.Ejecutar(docenteEliminar.id);
+_lista = ListarDocentesUseCase.Ejecutar(); //se actualiza la lista de clientes
+}
+    
+}
+
+private void Modificar(Docente d){
+  Navegador.NavigateTo($"docente/{d.id}");
+}
+}

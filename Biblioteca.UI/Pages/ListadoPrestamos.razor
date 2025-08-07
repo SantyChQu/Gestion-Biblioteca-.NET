@@ -1,0 +1,59 @@
+@page "/ListadoPrestamos"
+@inject ListarPrestamoUseCase _listadoPrestamosUseCase
+@inject NavigationManager Navegador
+
+<div style="background-image: url('https://images.unsplash.com/photo-1604147706283-d7119b5b822c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+<table class="table">
+    <thead>
+
+    <tr>
+        <th>ID</th>
+        <th>ID PERSONA</th>
+        <th>ID LIBRO</th>
+        <th>FECHA PRESTAMO</th>
+        <th>FECHA DEVOLUCION</th>
+        <th>ESTADO</th>
+        <th>ACCION</th>
+      </tr>  
+
+      </thead>
+     <tbody>
+        @foreach(var p in lisP)
+        {
+            <tr>
+                <td>@p.Id</td>
+                <td>@p.Idpersona</td>
+                <td>@p.Idlibro</td>
+                <td>@p.FechaPrestamo</td>
+                <td>@p.FechaDevolucion</td>
+                <td>@p.Estado</td>
+                <td>
+                  <button class="btn btn-primary" title="Devolver Prestamo" @onclick ="()=>DevolverP(p)" >
+<span  class="oi oi-pencil"></span>
+</button>
+
+                </td>
+            </tr>
+        }
+     </tbody> 
+
+   </table>
+
+</div>
+@code{
+    List<Prestamo> lisP = new List<Prestamo>();
+
+        protected override void OnInitialized()
+        {
+            lisP=_listadoPrestamosUseCase.Ejecutar();
+        }
+
+        
+
+        private void DevolverP(Prestamo p){
+            Navegador.NavigateTo($"prestamo/{p.Id}");
+        }
+
+               
+        }
+        

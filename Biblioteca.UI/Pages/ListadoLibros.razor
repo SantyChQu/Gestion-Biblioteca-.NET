@@ -1,0 +1,74 @@
+@page "/ListadoLibros"
+@inject ListarLibrosUseCase _listadoLibrosUseCase
+@inject NavigationManager Navegador
+@inject EliminarLibroUseCase EliminarLibroUseCase
+
+<DialogoConfirmacion @ref=dialogo OnConfirmado="Eliminar"/>
+
+<div  style="background-image: url('https://images.unsplash.com/photo-1532153259564-a5f24f261f51?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+<table class="table">
+    <thead>
+
+    <tr>
+        <th>ID</th>
+        <th>Titulo</th>
+        <th>Autor</th>
+        <th>Año de Publicacion</th>
+        <th>Genero</th>
+        <th>Cantidad De Ejemplares</th>
+        <th>ACCION</th>
+      </tr>  
+
+      </thead>
+     <tbody>
+        @foreach(var l in lisL)
+        {
+            <tr>
+                <td>@l.Id</td>
+                <td>@l.Titulo</td>
+                <td>@l.Autor</td>
+                <td>@l.AñoPublicacion</td>
+                <td>@l.genero</td>
+                <td>@l.CantEjemplares</td>
+                <td><button class ="btn btn-primary" title="Editar Libro" @onclick="()=>ModificarL(l)">
+                    <span class="oi oi-pencil"></span>
+                    </button>
+
+                </td>
+                <td><button class ="btn btn-primary" title="Eliminar Libro" @onclick="()=>EliminarL(l)">
+                    <span class="oi oi-trash"></span>
+                    </button>
+
+                </td>
+            </tr>
+        }
+     </tbody> 
+
+   </table>
+
+   </div>
+
+@code{
+    List<Libro> lisL = new List<Libro>();
+
+    Libro? EliminarLi=null;
+    DialogoConfirmacion dialogo=null!;
+    protected override void OnInitialized(){
+        lisL=_listadoLibrosUseCase.Ejecutar();
+    }    
+
+    private void ModificarL(Libro l){
+        Navegador.NavigateTo($"libro/{l.Id}");
+    }
+    private void EliminarL(Libro l){
+        EliminarLi=l;
+        dialogo.mensaje=$"desea eliminar el libro de nombre {l.Titulo}";
+        dialogo.Mostrar();
+    }
+
+    private void Eliminar(){
+        if(EliminarLi!=null){
+      EliminarLibroUseCase.Ejecutar(EliminarLi.Id);
+    }
+}
+}

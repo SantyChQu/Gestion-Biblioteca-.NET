@@ -1,0 +1,87 @@
+@page "/libro/{id:int?}"
+@inject AgregarLibroUseCase AgregarLibroUseCase
+@inject NavigationManager Navegador
+@inject ObtenerLibroUseCase ObtenerLibroUseCase
+@inject ModificarLibroUseCase ModificarLibroUseCase
+
+
+<EditForm Model="@l" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+
+<div  style="background-image: url('https://images.unsplash.com/photo-1519806870789-d65fc19601fa?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+@if(esNuevo){
+<h1>Complete el formulario para agregar el libro</h1>
+
+<input type="text" placeholder="Titulo" @bind="l.Titulo" class="form-control" >
+<ValidationMessage For = "@(()=> @l.Titulo)"/>
+<input type="text" placeholder="Autor" @bind="l.Autor" class="form-control">
+<ValidationMessage For = "@(()=> @l.Autor)"/>
+<label> Año de Publicacion:<input type="number" placeholder="Año de Publicacion" @bind="l.AñoPublicacion" class="form-control"> </label>
+<ValidationMessage For = "@(()=> @l.AñoPublicacion)"/>
+<input type="text" placeholder="Genero" @bind="l.genero" class="form-control">
+<ValidationMessage For = "@(()=> @l.genero)"/>
+<label> Cantidad de Ejemplares:<input type="number" placeholer="Cantidad de Ejemplares" @bind="l.CantEjemplares" class="form-control"> </label> 
+<ValidationMessage For = "@(()=> @l.CantEjemplares)"/>
+<button class ="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+}
+else{
+
+    <h1>Modificando al libro "@l.Titulo"</h1>
+ 
+    <input type="text" placeholder="Titulo" @bind="l.Titulo" class="form-control" >
+    <ValidationMessage For = "@(()=> @l.Titulo)"/>
+<input type="text" placeholder="Autor" @bind="l.Autor" class="form-control">
+<ValidationMessage For = "@(()=> @l.Autor)"/>
+<label> Año de Publicacion:<input type="number" placeholder="Año de Publicacion" @bind="l.AñoPublicacion" class="form-control"> </label>
+<ValidationMessage For = "@(()=> @l.AñoPublicacion)"/>
+<input type="text" placeholder="Genero" @bind="l.genero" class="form-control">
+<ValidationMessage For = "@(()=> @l.genero)"/>
+<label> Cantidad de Ejemplares:<input type="number" placeholer="Cantidad de Ejemplares" @bind="l.CantEjemplares" class="form-control"> </label> 
+<ValidationMessage For = "@(()=> @l.CantEjemplares)"/>
+<button class ="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+}
+
+</div>
+
+</EditForm>
+@code{
+
+public Libro l = new Libro();
+
+private bool esNuevo=true;
+
+[Parameter]
+public int? id{set;get;}
+private void Aceptar(){
+
+      if (string.IsNullOrWhiteSpace(l.Titulo) || string.IsNullOrWhiteSpace(l.Autor) || (l.AñoPublicacion == null) || (l.AñoPublicacion == 0) || (string.IsNullOrWhiteSpace(l.genero)) || (l.CantEjemplares == null) || (l.CantEjemplares == 0)) 
+  {return;}
+
+    if(esNuevo){
+    AgregarLibroUseCase.Ejecutar(l);
+    }
+    else{
+        ModificarLibroUseCase.Ejecutar(l);
+    }
+    l=new Libro();
+    Navegador.NavigateTo("/ListadoLibros");
+}
+
+
+        protected override void OnParametersSet()
+        {
+         if(id!=null){
+            var BuscarLibro= ObtenerLibroUseCase.Ejecutar(id.Value);
+            if(BuscarLibro!=null){
+                l=BuscarLibro;
+                esNuevo=false;
+            }
+            
+         }
+        }
+
+ private async Task OnValidSubmit(EditContext editContext){}
+ 
+    }
+
+}

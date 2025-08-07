@@ -1,0 +1,170 @@
+@page "/prestamo/{id:int?}"
+@inject RealizarPrestamoUseCase RealizarPrestamoUseCase
+@inject DevolverPrestamoUseCase DevolverPrestamoUseCase
+@inject ObtenerPrestamoUseCase ObtenerPrestamoUseCase
+@inject NavigationManager Navegador
+@inject IdsDisponiblesUseCase IdsDisponiblesUseCase
+@inject IdDisponibleLibroUseCase IdDisponibleLibroUseCase
+@inject ObtenerLibroUseCase ObtenerLibroUseCase
+<style>
+    .texto-estilo1 {
+        font-family: 'Arial', sans-serif;
+        font-size: 30px;
+        font-weight: bold;
+        font-style: normal;
+        color: rgb(18, 18, 19);
+    }
+
+    .texto-estilo2 {
+        font-family: 'Times New Roman', serif;
+        font-size: 20px;
+        font-style: italic;
+        color: rgb(13, 131, 13);
+    }
+
+    .fondo-blanco {
+        background-color: #c5c9c0;
+        border: 2px solid #000;
+        padding: 10px;
+        max-width: 2000px;
+        }
+
+        <style>
+    .campo-validacion {
+        margin-top: 10px; 
+    }
+</style>
+</style>
+<p style="color: red; font-size: 16px;">@MensajeError</p>
+<p style="color: red; font-size: 16px;">@me</p>
+<EditForm Model="@p" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+ <div class="fondo-blanco">
+
+<div style="background-image: url('https://i.imgur.com/oyqFXZQ.jpeg'); background-size: contain; background-repeat: no-repeat; background-position: 500px -200px; height: 100vh;">
+@if(EsNuevo){
+    <div style="border: 2px solid #000; padding: 10px;max-width: 500px; background-color: #f0f0f0">
+<h1 class="texto-estilo1">COMPLETE EL FORMULARIO<br> PARA AGREGAR EL PRESTAMO</h1> </div>
+
+<label  style="margin-top: 10px;" class="texto-estilo2"> Id de la Persona:<select @bind="p.Idpersona" class="form-control">
+                    @foreach (var id in ObtenerIdsDesdeLaBaseDeDatos())
+                    {
+                        <option value="@id">@id</option>
+                    }
+                </select> 
+                 <ValidationMessage For="@(() => p.Idpersona)" /></label>
+
+
+
+<label style="margin-bottom: 10px;" class="texto-estilo2">Id del Libro::<select @bind="p.Idlibro" class="form-control">
+                    @foreach (var id in ObtenerIdsLibrosDesdeLaBaseDeDatos())
+                    {
+                        <option value="@id">@id</option>
+                    }
+                </select> <ValidationMessage For="@(() => p.Idlibro)" /> </label>
+    
+    <!--input type="number" placeholder="Id Libro" @bind="p.Idlibro" class="form-control"></label> -->
+
+
+<input type="text" placeholder="Fecha del Prestamo" @bind="p.FechaPrestamo" class="form-control" style="max-width: 500px;"> 
+<ValidationMessage For = "@(()=> @p.FechaPrestamo)"/>
+<label> Estado:<input type="text" placeholer="Estado" @bind="p.Estado" class="form-control"></label>
+<ValidationMessage For = "@(()=> @p.Estado)"/>
+<button class ="btn btn-primary" @onclick="Aceptar" style="margin-top: 200px;">Aceptar</button>
+}
+else{
+    <h1>Complete los datos restantes para registrar la Devolucion correctamente:</h1>
+
+  <label> Fecha Devolucion:<input type="text" placeholder="Fecha de Devolucion" @bind="p.FechaDevolucion" class="form-control">  </label>
+  <ValidationMessage For = "@(()=> @p.FechaDevolucion)"/>
+<label> Estado:<input type="text" placeholer="Estado" @bind="p.Estado" class="form-control"></label>
+<ValidationMessage For = "@(()=> @p.Estado)"/>
+<button class ="btn btn-primary" @onclick="Aceptar" style="margin-top: 10px;">Aceptar</button>
+
+<button class ="btn btn-primary" @onclick="Cancelar">Cancelar</button>
+}
+
+</div>
+</div>
+</EditForm>
+@code{
+    public Prestamo p = new Prestamo();
+    
+
+    private int cant;
+    private bool EsNuevo=true;
+
+    private string MensajeError;
+
+    private string me;
+
+    [Parameter]
+    public int? id{set;get;}
+    private void Aceptar(){
+
+        if(EsNuevo){
+         
+            if (string.IsNullOrWhiteSpace(p.FechaPrestamo)  || (string.IsNullOrWhiteSpace(p.Estado)) ||(p.Idpersona==null) || (p.Idpersona==0) || (p.Idlibro==null) || (p.Idlibro==0))
+                {return;}
+      
+       var li = ObtenerLibroUseCase.Ejecutar(p.Idlibro);
+    //   Console.WriteLine(li.ListaPrestamo.Count());
+       if(li.CantEjemplares - li.ListaPrestamo.Count() >0){
+       RealizarPrestamoUseCase.Ejecutar(p);
+       }
+       else{
+        MensajeError="no hay ejemplares disponibles para ese ID";
+        StateHasChanged();
+        return;
+       }
+       }
+       else{
+           if (string.IsNullOrWhiteSpace(p.FechaDevolucion) || (p.FechaDevolucion == "Indefinido") || string.IsNullOrWhiteSpace(p.Estado))
+{
+    me="La fecha de devolucion no puede ser Indefinido";
+    StateHasChanged();
+    return;
+}
+
+
+        DevolverPrestamoUseCase.Ejecutar(p);
+       }
+       p=new Prestamo();
+       Navegador.NavigateTo("/ListadoPrestamos");
+    }
+
+   private void Cancelar(){
+    Navegador.NavigateTo("/ListadoPrestamos");
+   }
+
+        protected override void OnParametersSet()
+        {
+            if(id!=null){
+                var ObtenerPrestamo= ObtenerPrestamoUseCase.Ejecutar(id.Value);
+                if(ObtenerPrestamo!=null){
+                    p=ObtenerPrestamo;
+                    EsNuevo=false;
+                }
+            }
+        }
+
+
+ private List<int> ObtenerIdsDesdeLaBaseDeDatos()
+    {
+        
+        var lis = IdsDisponiblesUseCase.Ejecutar();
+
+        return lis;
+    }
+     private List<int> ObtenerIdsLibrosDesdeLaBaseDeDatos()
+    {
+        
+        var lis = IdDisponibleLibroUseCase.Ejecutar();
+
+        return lis;
+    }
+
+    private async Task OnValidSubmit(EditContext editContext){}
+ 
+    }
+}

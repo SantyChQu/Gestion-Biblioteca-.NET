@@ -1,0 +1,109 @@
+@page "/estudiante/{id:int?}"
+@inject NavigationManager Navegador
+@inject AgregarEstudianteUseCase AgregarEstudianteUseCase
+@inject ModificarEstudianteUseCase ModificarEstudianteUseCase
+@inject ObtenerEstudianteUseCase ObtenerEstudianteUseCase
+
+
+<EditForm Model="@e" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+
+
+<div  style="background-image: url('https://images.unsplash.com/photo-1519806870789-d65fc19601fa?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+@if(EsNuevo){
+
+
+<h1> Complete el siguiente formulario para registrar al estudiante:</h1>
+
+<input @ref="input_01" placeholder="Nombre" @bind="e.Nombre" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Nombre)"/>
+<input placeholder="Apellido" @bind="e.Apellido" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Apellido)"/>
+<label>Numero de Carnet: <input type="number" placeholder="Numero de Carnet" @bind="e.NumCarnet"></label>
+<ValidationMessage For = "@(()=> @e.NumCarnet)"/>
+<input placeholder="Direccion" @bind="e.Direccion" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Direccion)"/>
+<input  placeholder="Facultad" @bind="e.Facultad" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Facultad)"/>
+<label>Telefono: <input type="number" placeholder="Telefono" @bind="e.Telefono"></label>
+<ValidationMessage For = "@(()=> @e.Telefono)"/>
+<input  placeholder="Correo" @bind="e.Correo" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Correo)"/>
+<label>Numero Alumno: <input type="number" placeholder="Numero de Alumno" @bind="e.NumAlumno"></label <br>
+<ValidationMessage For = "@(()=> @e.NumAlumno)"/>
+<input type="text" placeholder="Carrera" @bind="e.Carrera">
+<ValidationMessage For = "@(()=> @e.Carrera)"/>
+<button class ="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+}
+else{
+    <h1>Modificando al estudiante: @e.Nombre</h1>
+
+    <h1> Complete el siguiente formulario para registrar al estudiante:</h1>
+
+<input @ref="input_01" placeholder="Nombre" @bind="e.Nombre" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Nombre)"/>
+<input placeholder="Apellido" @bind="e.Apellido" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Apellido)"/>
+<label>Numero de Carnet: <input type="number" placeholder="Numero de Carnet" @bind="e.NumCarnet"></label>
+<ValidationMessage For = "@(()=> @e.NumCarnet)"/>
+<input placeholder="Direccion" @bind="e.Direccion" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Direccion)"/>
+<input  placeholder="Facultad" @bind="e.Facultad" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Facultad)"/>
+<label>Telefono: <input type="number" placeholder="Telefono" @bind="e.Telefono"></label>
+<ValidationMessage For = "@(()=> @e.Telefono)"/>
+<input  placeholder="Correo" @bind="e.Correo" class="form-control" >
+<ValidationMessage For = "@(()=> @e.Correo)"/>
+<label>Numero Alumno: <input type="number" placeholder="Numero de Alumno" @bind="e.NumAlumno"></label <br>
+<ValidationMessage For = "@(()=> @e.NumAlumno)"/>
+<input type="text" placeholder="Carrera" @bind="e.Carrera">
+<ValidationMessage For = "@(()=> @e.Carrera)"/>
+<button class ="btn btn-primary" @onclick="Aceptar">Aceptar</button>
+}
+
+
+</div>
+
+</EditForm>
+@code{
+  bool EsNuevo=true;
+
+  [Parameter]
+
+  public int? id{set;get;}
+  
+  Estudiante e = new Estudiante();
+
+  ElementReference input_01;
+  private void Aceptar(){
+    
+if (string.IsNullOrWhiteSpace(e.Nombre) || string.IsNullOrWhiteSpace(e.Apellido) || (e.NumCarnet == null) || (e.NumCarnet == 0) || (string.IsNullOrWhiteSpace(e.Correo)) || (e.NumAlumno == null) || (e.NumAlumno == 0) || (string.IsNullOrWhiteSpace(e.Carrera)))
+  {return;}
+
+
+    if(EsNuevo){
+    AgregarEstudianteUseCase.Ejecutar(e);
+    }
+    else{
+        ModificarEstudianteUseCase.Ejecutar(e);
+    }
+     e=new Estudiante();
+      input_01.FocusAsync();
+    Navegador.NavigateTo("ListadoEstudiantes");
+  }
+
+        protected override void OnParametersSet()
+        {
+         if(id!=null){
+            var BuscarEstudiante=ObtenerEstudianteUseCase.Ejecutar(id.Value);
+            if(BuscarEstudiante!=null){
+                e=BuscarEstudiante;
+                EsNuevo=false;
+            }
+         }
+        }
+
+ private async Task OnValidSubmit(EditContext editContext){}
+ 
+    }
+}

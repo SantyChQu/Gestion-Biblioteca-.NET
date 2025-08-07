@@ -1,0 +1,107 @@
+﻿@page "/"
+@inject ListarEstudiantesUseCase _ListarEstudiantesUseCase
+@inject ListarDocentesUseCase _ListarDocentesUseCase
+<style>
+
+    .fondo-blanco {
+        background-color: #eff3eb;
+        border:2px solid #ddd;
+        padding: 5px;
+        max-width: 1500px;
+        margin-bottom: 50px
+        }
+        .texto-estilo {
+        font-family: 'Arial', sans-serif;
+        font-size: 30px;
+        color: #333; /* Color del texto */
+        font-weight: bold;
+        }
+        table.fondo-blanco th,
+    table.fondo-blanco td {
+        border: 1px solid #ddd; /* Añade un borde a las celdas */
+        padding: 8px; /* Ajusta el espacio interno de las celdas */
+    }
+}
+ .encabezado-tabla {
+        font-size: 24px;
+        margin-bottom: 10px; /* Ajusta el espacio entre el encabezado y la tabla */
+    }
+    
+</style>
+<PageTitle>Index</PageTitle>
+<div  style="background-image: url('https://images.unsplash.com/photo-1593173945705-d6451ed5909a?q=80&w=1916&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-repeat: no-repeat; background-position: top left; height: 100vh; padding: 20px;">
+    <h1 class="fondo-blanco texto-estilo">Bienvenido a la Biblioteca de la Universidad de La Plata</h1>
+
+    <h1 class="fondo-blanco texto-estilo">A continuacion se encuentra la informacion disponible</h1>
+
+
+      
+     <h1 class="encabezado-tabla fondo-blanco" style="font-size: 24px; margin-bottom: 10px; max-width:180px">ESTUDIANTES</h1>
+     <!-- Primera tabla -->
+  
+    <table class="fondo-blanco">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOMBRE</th>
+                <th>APELLIDO</th>
+            </tr>
+        </thead>
+       <tbody>
+        @foreach(var e in lisE)
+        {
+        
+            <tr>
+          
+                <td>@e.id</td>
+                 <td>@e.Nombre</td>
+                <td>@e.Apellido</td>
+               
+            </tr>
+        
+            <!-- Agrega más filas según sea necesario -->
+            }
+        </tbody>
+    
+    </table>
+ 
+
+    <h1 class="encabezado-tabla fondo-blanco" style="font-size: 24px; margin-bottom: 10px; max-width:180px">DOCENTES</h1>
+     <!-- Primera tabla -->
+   
+    <table class="fondo-blanco">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>NOMBRE</th>
+                <th>APELLIDO</th>
+            </tr>
+        </thead>
+       <tbody>
+        @foreach(var d in lisD)
+        {
+            <tr>
+                <td>@d.id</td>
+                 <td>@d.Nombre</td>
+                <td>@d.Apellido</td>
+                
+            </tr>
+            <!-- Agrega más filas según sea necesario -->
+            }
+        </tbody>
+    </table>
+ 
+</div>
+
+@code{
+   public List<Estudiante> lisE=new List<Estudiante>();
+
+    public List<Docente> lisD = new List<Docente>();
+
+        protected override void OnInitialized()
+        {
+            lisE=_ListarEstudiantesUseCase.Ejecutar();
+            lisD= _ListarDocentesUseCase.Ejecutar();
+
+        }
+}
