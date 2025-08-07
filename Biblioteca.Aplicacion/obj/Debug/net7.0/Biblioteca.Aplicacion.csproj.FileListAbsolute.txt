@@ -1,0 +1,11 @@
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\bin\Debug\net7.0\Biblioteca.Aplicacion.deps.json
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\bin\Debug\net7.0\Biblioteca.Aplicacion.dll
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\bin\Debug\net7.0\Biblioteca.Aplicacion.pdb
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\Biblioteca.Aplicacion.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\Biblioteca.Aplicacion.AssemblyInfoInputs.cache
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\Biblioteca.Aplicacion.AssemblyInfo.cs
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\Biblioteca.Aplicacion.csproj.CoreCompileInputs.cache
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\Biblioteca.Aplicacion.dll
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\refint\Biblioteca.Aplicacion.dll
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\Biblioteca.Aplicacion.pdb
+C:\Users\Santy\Desktop\santy\BibliotecaExperimentar - copia\Biblioteca.Aplicacion\obj\Debug\net7.0\ref\Biblioteca.Aplicacion.dll
